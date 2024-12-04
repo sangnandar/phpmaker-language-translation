@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+    <?!= include('css.html'); ?>
+    <script>
+      const DEVELOPER_KEY = 'AIza...';
+      const GCP_PROJECT_NUMBER = ...;
+      let pickerApiLoaded = false;
+      function onApiLoad() {
+        gapi.load('picker', {
+          callback: function () {
+            pickerApiLoaded = true;
+          },
+        });
+      }
+    </script>
+  </head>
+  <body>
+
+    <div id="loader">
+      <div>
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+    <div>
+      <table>
+        <tbody>
+          <tr id="en-us">
+            <td><span>Current en-US</span></td>
+            <td><button onclick="showPicker(this)">Select a file</button></td>
+            <td><span class="file-name"></span><input class="file-id" /></td>
+          </tr>
+          <tr id="prev-xml">
+            <td><span>Previous xml</span></td>
+            <td><button onclick="showPicker(this)">Select a file</button></td>
+            <td><span class="file-name"></span><input class="file-id" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <button onclick="submit()">Submit</button>
+      <button onclick="google.script.host.close()">Cancel</button>
+    </div>
+
+    <div id="error"></div>
+
+    <script src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
+
+    <script>
+      const loader = document.getElementById('loader');
+
+      function showPicker(el) {
+        loader.style.display = 'block'; // Show loader
+        google.script.run
+          .withFailureHandler(error => {
+            document.getElementById('error').innerHTML = 'Error: ' + error;
+            loader.style.display = 'none'; // Hide loader
+          })
+          .withSuccessHandler(token => {
+            loader.style.display = 'none'; // Hide loader
+            if (pickerApiLoaded && token) {
+              const picker = new google.picker.PickerBuilder()
+                // filter only xml files
+                .addView(
+                  new google.picker.DocsView(
+                    google.picker.ViewId.DOCS
+                  ).setMimeTypes('text/xml')
+                )
+                .enableFeature(google.picker.Feature.NAV_HIDDEN)
+                .hideTitleBar()
+                .setOAuthToken(token)
+                .setDeveloperKey(DEVELOPER_KEY)
+                .setAppId(GCP_PROJECT_NUMBER)
+                .setOrigin(google.script.host.origin)
+                // minimum size is (566,350)
+                .setSize(600, 400)
+                .setCallback(data => {
+                  const action = data[google.picker.Response.ACTION];
+                  if (action === google.picker.Action.PICKED) {
+                    const doc = data[google.picker.Response.DOCUMENTS][0];
+                    const url = doc[google.picker.Document.URL],
+                          title = doc[google.picker.Document.NAME],
+                          id = doc[google.picker.Document.ID];
+                    const em = el.closest('tr');
+                    em.querySelector('.file-name').innerHTML = '<a href="' + url + '">' + title + '</a>';
+                    em.querySelector('.file-id').value = id;
+                  }
+                })
+                .build()
+                .setVisible(true);
+            } else {
+              document.getElementById('error').innerHTML = 'Unable to load the file picker.';
+            }
+          })
+          .getOAuthToken();
+      }
+
+      function submit() {
+        loader.style.display = 'block'; // Show loader
+        google.script.run
+          .withFailureHandler(error => {
+            document.getElementById('error').innerHTML = 'Error: ' + error;
+            loader.style.display = 'none'; // Hide loader
+          })
+          .withSuccessHandler(result => {
+            loader.style.display = 'none'; // Hide loader
+            google.script.host.close();
+          })
+          .parseXmlFiles([
+            document.getElementById('en-us').querySelector('.file-id').value,
+            document.getElementById('prev-xml').querySelector('.file-id').value
+          ]);
+      }
+
+    </script>
+
+  </body>
+</html>
