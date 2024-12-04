@@ -16,5 +16,8 @@ This is Google Apps Script for translating [PHPMaker](https://phpmaker.dev/) lan
 4. Translate the newly introduced phrases in empty cells in column C.
 5. Menu toolbar: **XML -> Create new XML**, to generate new translation file.
 
-# Future update
+# To Do
 Auto translation using "Cloud Translation API".
+
+# Donate
+[paypal.me/sangnandar](https://www.paypal.me/sangnandar)
