@@ -8,7 +8,7 @@ This is Google Apps Script for translating [PHPMaker](https://phpmaker.dev/) lan
 2. Enable "Google Drive API" and "Google Picker API" for the project.
 3. Generate API Key.
 4. Copy GCP Project Number to **Apps Script -> Project Settings -> Google Cloud Platform (GCP) Project**.
-5. Store API Key and GCP Project Number in Script Properties. Add key-value pair { "apiKey": API Key, "projectNumber": GCP Project Number } to **Apps Script -> Project Settings -> Script Properties**.
+5. Store API Key and GCP Project Number in Script Properties. Add key-value pair `{ "apiKey": API Key, "projectNumber": GCP Project Number }` to **Apps Script -> Project Settings -> Script Properties**.
 
 # Usage
 1. Upload current `english.en-US.xml` file used by PHPMaker to Google Drive.
