@@ -7,6 +7,7 @@ try {
 }
 
 const docProps = PropertiesService.getDocumentProperties();
+const scriptProps = PropertiesService.getScriptProperties();
 const filenameSuffix = ' - ' + Utilities.formatDate(new Date(), 'UTC', "YYYYMMdd-HHmmss");
 
 function include(filename) {
@@ -15,7 +16,10 @@ function include(filename) {
 
 function showPicker() {
   if (ui) {
+    const { apiKey, projectNumber } = scriptProps.getProperties();
+
     const template = HtmlService.createTemplateFromFile('dialog.html');
+    Object.assign(template, { apiKey, projectNumber: Number(projectNumber) });
     html = template.evaluate();
     ui.showModalDialog(
       html

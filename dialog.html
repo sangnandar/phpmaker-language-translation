@@ -4,8 +4,8 @@
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
     <?!= include('css.html'); ?>
     <script>
-      const DEVELOPER_KEY = 'AIza...';
-      const GCP_PROJECT_NUMBER = 123456789012;
+      const API_KEY = '<?!= apiKey ?>';
+      const GCP_PROJECT_NUMBER = <?!= projectNumber ?>;
       let pickerApiLoaded = false;
       function onApiLoad() {
         gapi.load('picker', {
@@ -37,6 +37,10 @@
             <td><button onclick="showPicker(this)">Select a file</button></td>
             <td><span class="file-name"></span><input class="file-id" /></td>
           </tr>
+          <tr id="lang">
+            <td><span>Language</span></td>
+            <td colspan="2"><input size="1" /><a href="https://cloud.google.com/translate/docs/languages" target="_blank">Language list</a></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -66,14 +70,14 @@
               const picker = new google.picker.PickerBuilder()
                 // filter only xml files
                 .addView(
-                  new google.picker.DocsView(
-                    google.picker.ViewId.DOCS
-                  ).setMimeTypes('text/xml')
+                  new google.picker.DocsView(google.picker.ViewId.DOCS)
+                    .setMimeTypes('text/xml')
+                    .setMode(google.picker.DocsViewMode.LIST)
                 )
                 .enableFeature(google.picker.Feature.NAV_HIDDEN)
                 .hideTitleBar()
                 .setOAuthToken(token)
-                .setDeveloperKey(DEVELOPER_KEY)
+                .setDeveloperKey(API_KEY)
                 .setAppId(GCP_PROJECT_NUMBER)
                 .setOrigin(google.script.host.origin)
                 // minimum size is (566,350)
@@ -112,7 +116,8 @@
           })
           .parseXmlFiles([
             document.getElementById('en-us').querySelector('.file-id').value,
-            document.getElementById('prev-xml').querySelector('.file-id').value
+            document.getElementById('prev-xml').querySelector('.file-id').value,
+            document.getElementById('lang').querySelector('input').value
           ]);
       }
 

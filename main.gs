@@ -6,8 +6,10 @@ function onOpen() {
     .addToUi();
 }
 
-function parseXmlFiles(xmlFileIds) {
+function parseXmlFiles(args) {
 
+  const lang = args[2];
+  const xmlFileIds = [args[0], args[1]]
   docProps.setProperty('xmlFileId', xmlFileIds[0]); // store in docProps to be used on createXml()
   
   const en_US = {};
@@ -32,7 +34,7 @@ function parseXmlFiles(xmlFileIds) {
       element.getChildren().forEach(child => collectPhrases(child, data)); // collect <phrase> elements recursively
     }
 
-    let data, sheet;
+    let data, sheet, bgColors;
     keys.forEach(key => {
       data = [];
       if (key === 'phrases') {
@@ -46,14 +48,21 @@ function parseXmlFiles(xmlFileIds) {
       }
 
       sheet = ss.getSheetByName(key);
+      bgColors = [];
       if (i === 0) {
         en_US[key] = data;
         sheet.clear(); // Clear any existing data
         sheet.getRange(1, 1, data.length, data[0].length).setValues(data); // write col ID and col en-US
       } else {
         const lookup = Object.fromEntries(data);
-        data = en_US[key].map(([k]) => [lookup[k]]); // re-create to match en-US
-        sheet.getRange(1, 3, data.length, data[0].length).setValues(data); // write col previous-translation
+        // re-create to match en-US and translate new phrases
+        data = en_US[key].map(x => {
+          bgColors.push([lookup[x[0]] ? null : 'pink']);
+          return [lookup[x[0]] || LanguageApp.translate(x[1], 'en', lang)];
+        });
+        sheet.getRange(1, 3, data.length, data[0].length)
+          .setValues(data)
+          .setBackgrounds(bgColors);
       }
     });
   });
