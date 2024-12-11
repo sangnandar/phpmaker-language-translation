@@ -16,7 +16,7 @@ This is Google Apps Script for translating [PHPMaker](https://phpmaker.dev/) lan
 3. Menu toolbar: **XML -> Get XMLs**, to parse the XMLs to Google Sheets. Input your language in ISO-639 code. Please be aware that Google Cloud Translation use [ISO-639](https://www.iso.org/iso-639-language-code) while PHPMaker use [RFC 4646](https://datatracker.ietf.org/doc/html/rfc4646).
 4. Newly introduced phrases will be auto-translated and highlighted in column C.
 5. Old phrases will not be translated. Please recheck because sometimes PHPMaker change the value of old phrases.
-6. DO NOT translate %s, %d, %d%%, %n$d of %n$d, {n} and $n (where n is digit).
+6. DO NOT translate `%s, %d, %d%%, %n$d of %n$d, {n} and $n` (where n is digit).
 7. Menu toolbar: **XML -> Create new XML**, to generate new translation file.
 
 # Reference
